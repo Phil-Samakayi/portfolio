@@ -11,6 +11,10 @@ PROFILE = {
     "tagline": "I build real-time web platforms for everyday problems in Zambia.",
     "location": "Lusaka, Zambia",
     "email": "philsamakayi@gmail.com",
+    "phones": [
+        {"display": "0767 000 900", "tel": "+260767000900"},
+        {"display": "0779 229 420", "tel": "+260779229420"},
+    ],
     "github": "https://github.com/Phil-Samakayi",
     "linkedin": "",  # add your LinkedIn URL to show the link
     "available": True,

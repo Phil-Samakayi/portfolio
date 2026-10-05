@@ -185,6 +185,7 @@
           <p class="lead reveal">Have a role, a project or an idea? Send a message and I'll get back to you.</p>
           <ul class="contact-links reveal">
             <li><span>Email</span><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></li>
+            {% if profile.phones %}<li><span>Phone</span><div class="phones">{% for ph in profile.phones %}<a href="tel:{{ ph.tel }}">{{ ph.display }}</a>{% endfor %}</div></li>{% endif %}
             {% if profile.github %}<li><span>GitHub</span><a href="{{ profile.github }}" target="_blank" rel="noopener">{{ profile.github | replace('https://', '') }}</a></li>{% endif %}
             {% if profile.linkedin %}<li><span>LinkedIn</span><a href="{{ profile.linkedin }}" target="_blank" rel="noopener">{{ profile.linkedin | replace('https://', '') }}</a></li>{% endif %}
             <li><span>Based in</span>{{ profile.location }}</li>

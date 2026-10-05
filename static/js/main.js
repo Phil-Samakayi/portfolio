@@ -220,6 +220,7 @@
     contact: () => {
       const p = DATA.profile;
       const rows = [`${hl("email".padEnd(10))}${esc(p.email)}`];
+      if (p.phones?.length) rows.push(`${hl("phone".padEnd(10))}${esc(p.phones.map((x) => x.display).join("  |  "))}`);
       if (p.github) rows.push(`${hl("github".padEnd(10))}${esc(p.github)}`);
       if (p.linkedin) rows.push(`${hl("linkedin".padEnd(10))}${esc(p.linkedin)}`);
       rows.push(dim("Or type 'goto contact' to use the form."));
