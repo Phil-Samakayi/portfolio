@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page not found — {{ profile.name }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <main class="notfound">
+    <p class="eyebrow">Error 404</p>
+    <h1 class="display">This page doesn't exist.</h1>
+    <a class="btn btn-primary" href="{{ url_for('index') }}">Back to home</a>
+  </main>
+</body>
+</html>

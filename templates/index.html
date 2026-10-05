@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ profile.name }} — {{ profile.role }}</title>
+  <meta name="description" content="{{ profile.tagline }}">
+  <meta property="og:title" content="{{ profile.name }} — {{ profile.role }}">
+  <meta property="og:description" content="{{ profile.tagline }}">
+  <meta name="theme-color" content="#0a0a0c">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230a0a0c'/><text x='50' y='66' font-size='46' text-anchor='middle' fill='%23e3b27e' font-family='Georgia,serif'>{{ profile.initials }}</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="spotlight" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="progress" aria-hidden="true"><span></span></div>
+
+  <header class="nav" id="nav">
+    <a class="brand" href="#top" aria-label="{{ profile.name }}, home">{{ profile.initials }}<span>.</span></a>
+    <nav class="nav-links" id="nav-links" aria-label="Primary">
+      <a href="#about">About</a>
+      <a href="#work">Work</a>
+      <a href="#skills">Skills</a>
+      <a href="#terminal">Terminal</a>
+      <a href="#contact" class="nav-cta">Contact</a>
+    </nav>
+    <button class="menu-btn" id="menu-btn" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links"><span></span><span></span></button>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero" id="top">
+      <div class="orb orb-a" aria-hidden="true"></div>
+      <div class="orb orb-b" aria-hidden="true"></div>
+      <div class="container hero-grid">
+        <div class="hero-copy">
+        {% if profile.available %}
+        <p class="status reveal"><span class="dot"></span>Open to internships and graduate roles</p>
+        {% endif %}
+        <h1 class="display hero-title reveal">
+          {{ profile.name.split(' ')[0] }} <em>{{ profile.name.split(' ')[1:] | join(' ') }}</em>
+        </h1>
+        <p class="hero-role reveal"><span class="typed" id="typed" data-words='{{ profile.typed_roles | tojson }}'>{{ profile.role }}</span><span class="caret" aria-hidden="true"></span></p>
+        <p class="hero-tagline reveal">{{ profile.tagline }}</p>
+        <div class="hero-actions reveal">
+          <a class="btn btn-primary magnetic" href="#work">View my work <span aria-hidden="true">→</span></a>
+          <a class="btn btn-ghost magnetic" href="#contact">Get in touch</a>
+        </div>
+        <p class="hero-meta reveal">{{ profile.location }} <span>·</span> <span id="local-time">--:--</span> local time</p>
+        </div>
+        <figure class="portrait reveal" id="portrait">
+          <span class="portrait-ring" aria-hidden="true"></span>
+          <img src="{{ url_for('static', filename='img/portrait.jpg') }}" alt="Portrait of {{ profile.name }}" width="659" height="878">
+          <figcaption><span class="dot"></span>{{ profile.location }}</figcaption>
+        </figure>
+      </div>
+      <a class="scroll-hint" href="#about" aria-label="Scroll to about"><span></span></a>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section" id="about">
+      <div class="container about-grid">
+        <div>
+          <p class="eyebrow reveal">01 — About</p>
+          <h2 class="display section-title reveal">Building things that are <em>useful here.</em></h2>
+        </div>
+        <div>
+          {% for para in profile.about %}
+          <p class="lead reveal">{{ para }}</p>
+          {% endfor %}
+          <div class="stats reveal">
+            {% for s in profile.stats %}
+            <div class="stat">
+              <span class="stat-value"><span class="count" data-target="{{ s.value }}">0</span>{{ s.suffix }}</span>
+              <span class="stat-label">{{ s.label }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORK -->
+    <section class="section" id="work">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow reveal">02 — Selected work</p>
+            <h2 class="display section-title reveal">Projects</h2>
+          </div>
+          <div class="filters reveal" role="group" aria-label="Filter projects">
+            {% for c in categories %}
+            <button class="filter{% if loop.first %} active{% endif %}" data-filter="{{ c.key }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">{{ c.label }}</button>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="projects" id="projects">
+          {% for p in projects %}
+          <button class="card reveal" data-id="{{ p.id }}" data-category="{{ p.category }}" aria-haspopup="dialog">
+            <span class="card-glow" aria-hidden="true"></span>
+            <span class="card-top">
+              <span class="card-index">{{ '%02d' % loop.index }}</span>
+              <span class="card-cat">{{ p.category }} · {{ p.year }}</span>
+            </span>
+            <span class="card-title display">{{ p.title }}</span>
+            <span class="card-summary">{{ p.summary }}</span>
+            <span class="tags">
+              {% for t in p.stack[:4] %}<span class="tag">{{ t }}</span>{% endfor %}
+            </span>
+            <span class="card-more">View details <span aria-hidden="true">↗</span></span>
+          </button>
+          {% endfor %}
+        </div>
+        <p class="empty" id="empty" hidden>No projects in this category yet.</p>
+      </div>
+    </section>
+
+    <!-- SKILLS + JOURNEY -->
+    <section class="section" id="skills">
+      <div class="container">
+        <p class="eyebrow reveal">03 — Toolkit</p>
+        <h2 class="display section-title reveal">Skills &amp; journey</h2>
+        <div class="split">
+          <div class="skill-groups">
+            {% for g in skills %}
+            <div class="skill-group reveal">
+              <h3>{{ g.group }}</h3>
+              <div class="tags">
+                {% for item in g['items'] %}<span class="tag tag-lg">{{ item }}</span>{% endfor %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          <ol class="timeline">
+            {% for j in journey %}
+            <li class="reveal">
+              <span class="timeline-period">{{ j.period }}</span>
+              <h3>{{ j.title }}</h3>
+              <p>{{ j.text }}</p>
+            </li>
+            {% endfor %}
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- TERMINAL -->
+    <section class="section" id="terminal">
+      <div class="container">
+        <p class="eyebrow reveal">04 — Interactive</p>
+        <h2 class="display section-title reveal">Prefer a <em>command line?</em></h2>
+        <div class="term reveal" id="term">
+          <div class="term-bar">
+            <span class="term-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="term-title">visitor@{{ profile.name.split(' ')[0] | lower }} — portfolio</span>
+          </div>
+          <div class="term-body" id="term-body" role="log" aria-live="polite" tabindex="0">
+            <div id="term-output"></div>
+            <label class="term-line">
+              <span class="term-prompt">visitor@{{ profile.name.split(' ')[0] | lower }}:~$</span>
+              <input id="term-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Terminal input">
+            </label>
+          </div>
+          <div class="term-chips" aria-label="Quick commands">
+            {% for c in ['help', 'about', 'projects', 'skills', 'contact', 'clear'] %}
+            <button class="chip" data-cmd="{{ c }}">{{ c }}</button>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section" id="contact">
+      <div class="container contact-grid">
+        <div>
+          <p class="eyebrow reveal">05 — Contact</p>
+          <h2 class="display section-title reveal">Let's build <em>something.</em></h2>
+          <p class="lead reveal">Have a role, a project or an idea? Send a message and I'll get back to you.</p>
+          <ul class="contact-links reveal">
+            <li><span>Email</span><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></li>
+            {% if profile.github %}<li><span>GitHub</span><a href="{{ profile.github }}" target="_blank" rel="noopener">{{ profile.github | replace('https://', '') }}</a></li>{% endif %}
+            {% if profile.linkedin %}<li><span>LinkedIn</span><a href="{{ profile.linkedin }}" target="_blank" rel="noopener">{{ profile.linkedin | replace('https://', '') }}</a></li>{% endif %}
+            <li><span>Based in</span>{{ profile.location }}</li>
+          </ul>
+        </div>
+        <form class="form reveal" id="contact-form" novalidate>
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" autocomplete="name" required maxlength="80">
+            <p class="error" data-for="name"></p>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required maxlength="120">
+            <p class="error" data-for="email"></p>
+          </div>
+          <div class="field hp" aria-hidden="true">
+            <label for="website">Website</label>
+            <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="message">Message <span class="counter" id="counter">0 / 3000</span></label>
+            <textarea id="message" name="message" rows="5" required maxlength="3000"></textarea>
+            <p class="error" data-for="message"></p>
+          </div>
+          <button class="btn btn-primary btn-block" type="submit" id="send-btn">Send message</button>
+          <p class="form-status" id="form-status" role="status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>© {{ year }} {{ profile.name }}</span>
+      <span>Built with Python &amp; Flask</span>
+      <a href="#top">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <!-- PROJECT MODAL -->
+  <dialog class="modal" id="modal" aria-labelledby="modal-title">
+    <button class="modal-close" id="modal-close" aria-label="Close">×</button>
+    <p class="eyebrow" id="modal-meta"></p>
+    <h3 class="display" id="modal-title"></h3>
+    <p class="modal-role" id="modal-role"></p>
+    <p class="modal-desc" id="modal-desc"></p>
+    <ul class="modal-list" id="modal-highlights"></ul>
+    <div class="tags" id="modal-stack"></div>
+    <a class="btn btn-primary" id="modal-link" target="_blank" rel="noopener" hidden>Visit project <span aria-hidden="true">↗</span></a>
+  </dialog>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</body>
+</html>
