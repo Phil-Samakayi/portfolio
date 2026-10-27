@@ -9,7 +9,8 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
   let DATA = null;
-  const dataReady = fetch("/api/portfolio").then((r) => r.json()).then((d) => (DATA = d)).catch(() => null);
+  try { DATA = JSON.parse($("#portfolio-data").textContent); } catch (_) { DATA = null; }
+  const dataReady = Promise.resolve(DATA);
 
   /* ---------- Nav, progress bar, spotlight ---------- */
   const nav = $("#nav");
@@ -333,17 +334,27 @@
       $(".field.invalid input, .field.invalid textarea", form)?.focus();
       return;
     }
+    const endpoint = form.dataset.endpoint;
+    if (!endpoint) {
+      // No form backend configured (static hosting): hand off to the visitor's email app.
+      const subject = encodeURIComponent(`Portfolio message from ${d.name}`);
+      const bodyText = encodeURIComponent(`${d.message}\n\n${d.name}\n${d.email}`);
+      location.href = `mailto:${form.dataset.email}?subject=${subject}&body=${bodyText}`;
+      status.classList.add("ok");
+      status.textContent = "Opening your email app with the message ready to send.";
+      return;
+    }
     sendBtn.disabled = true;
     sendBtn.textContent = "Sending…";
     try {
-      const res = await fetch("/api/contact", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(d) });
+      const res = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(d) });
       const json = await res.json().catch(() => ({}));
-      if (res.ok && json.ok) {
+      if (res.ok && json.ok !== false) {
         form.reset();
         counter.textContent = "0 / 3000";
         status.classList.add("ok");
         status.textContent = "Message sent. Thank you, I'll be in touch soon.";
-      } else if (json.errors) {
+      } else if (json.errors && !Array.isArray(json.errors)) {
         setErrors(json.errors);
       } else {
         throw new Error(json.error || "Something went wrong. Please try again.");

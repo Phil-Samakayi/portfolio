@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 from email.message import EmailMessage
 from pathlib import Path
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, url_for
 
 import content
 
@@ -77,6 +77,32 @@ def send_notification(name: str, email: str, message: str) -> None:
         app.logger.warning("Could not send notification email: %s", exc)
 
 
+def site_data() -> dict:
+    return {
+        "profile": content.PROFILE,
+        "skills": content.SKILLS,
+        "projects": content.PROJECTS,
+        "journey": content.JOURNEY,
+    }
+
+
+@app.context_processor
+def template_helpers():
+    """Asset and link helpers that work both under Flask and in the static build."""
+    base = app.config.get("STATIC_BASE_URL")  # set only by build.py
+    if base is not None:
+        return {
+            "asset": lambda path: f"{base}static/{path}",
+            "home_url": base,
+            "contact_endpoint": getattr(content, "FORM_ENDPOINT", ""),
+        }
+    return {
+        "asset": lambda path: url_for("static", filename=path),
+        "home_url": url_for("index"),
+        "contact_endpoint": url_for("api_contact"),
+    }
+
+
 @app.route("/")
 def index():
     return render_template(
@@ -86,6 +112,7 @@ def index():
         projects=content.PROJECTS,
         categories=content.CATEGORIES,
         journey=content.JOURNEY,
+        site_data=site_data(),
         year=datetime.now().year,
     )
 
@@ -93,12 +120,7 @@ def index():
 @app.route("/api/portfolio")
 def api_portfolio():
     """Data used by the project modals and the interactive terminal."""
-    return jsonify(
-        profile=content.PROFILE,
-        skills=content.SKILLS,
-        projects=content.PROJECTS,
-        journey=content.JOURNEY,
-    )
+    return jsonify(site_data())
 
 
 @app.route("/api/contact", methods=["POST"])

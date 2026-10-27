@@ -30,19 +30,27 @@ To also receive each message by email, set these environment variables
 
 ## Deploy
 
-Works on Render, Railway, Fly.io or PythonAnywhere. Start command:
+### GitHub Pages (static, free)
 
-```bash
-gunicorn app:app
-```
+Every push to `main` builds a static copy with `build.py` and publishes it through
+`.github/workflows/pages.yml`. One-time setup: repo **Settings → Pages → Source: GitHub Actions**.
+The site is then live at `https://<username>.github.io/<repo>/`.
 
-Note: on hosts with an ephemeral disk (e.g. Render free tier), `messages.db` resets on
-redeploy, so set up the SMTP variables or point `PORTFOLIO_DB` at a persistent disk.
+GitHub Pages can't run Python, so the contact form there uses `FORM_ENDPOINT` in `content.py`
+(a free https://formspree.io form). If it's empty, the form opens the visitor's email app instead.
+
+To preview the static build locally: `python build.py` then `python -m http.server -d dist`.
+
+### Full Flask app (Render, Railway, PythonAnywhere)
+
+Start command: `gunicorn app:app`. Here the contact form saves to `messages.db` and can email you.
+On hosts with an ephemeral disk, set up the SMTP variables or point `PORTFOLIO_DB` at a persistent disk.
 
 ## Structure
 
 ```
 app.py              Flask routes and contact API
+build.py            Static build for GitHub Pages
 content.py          All site content
 templates/          index.html, 404.html
 static/css/style.css

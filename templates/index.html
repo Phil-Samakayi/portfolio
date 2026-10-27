@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -55,7 +55,7 @@
         </div>
         <figure class="portrait reveal" id="portrait">
           <span class="portrait-ring" aria-hidden="true"></span>
-          <img src="{{ url_for('static', filename='img/portrait.jpg') }}" alt="Portrait of {{ profile.name }}" width="659" height="878">
+          <img src="{{ asset('img/portrait.jpg') }}" alt="Portrait of {{ profile.name }}" width="659" height="878">
           <figcaption><span class="dot"></span>{{ profile.location }}</figcaption>
         </figure>
       </div>
@@ -191,7 +191,7 @@
             <li><span>Based in</span>{{ profile.location }}</li>
           </ul>
         </div>
-        <form class="form reveal" id="contact-form" novalidate>
+        <form class="form reveal" id="contact-form" data-endpoint="{{ contact_endpoint }}" data-email="{{ profile.email }}" novalidate>
           <div class="field">
             <label for="name">Name</label>
             <input id="name" name="name" type="text" autocomplete="name" required maxlength="80">
@@ -238,6 +238,7 @@
     <a class="btn btn-primary" id="modal-link" target="_blank" rel="noopener" hidden>Visit project <span aria-hidden="true">↗</span></a>
   </dialog>
 
-  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+  <script id="portfolio-data" type="application/json">{{ site_data | tojson }}</script>
+  <script src="{{ asset('js/main.js') }}" defer></script>
 </body>
 </html>

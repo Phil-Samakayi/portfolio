@@ -3,6 +3,12 @@
 Projects and skills are taken from the project folders in C:\\Dev.
 """
 
+# Contact form endpoint for the static (GitHub Pages) version of the site.
+# Create a free form at https://formspree.io and paste its URL here, e.g.
+# "https://formspree.io/f/abcdwxyz". Left empty, the form opens the visitor's
+# email app with the message filled in instead.
+FORM_ENDPOINT = ""
+
 PROFILE = {
     "name": "Phil Samakayi",
     "initials": "PS",
